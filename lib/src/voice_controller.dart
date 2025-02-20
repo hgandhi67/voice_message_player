@@ -120,7 +120,12 @@ class VoiceController extends MyTicker {
         downloadStreamSubscription = _getFileFromCacheWithProgress()
             .listen((FileResponse fileResponse) async {
           if (fileResponse is FileInfo) {
-            await startPlaying(fileResponse.file.path);
+            if (kIsWeb) {
+              await startPlaying(fileResponse.originalUrl);
+            } else {
+              await startPlaying(fileResponse.file.path);
+            }
+
             onPlaying();
           } else if (fileResponse is DownloadProgress) {
             _updateUi();
