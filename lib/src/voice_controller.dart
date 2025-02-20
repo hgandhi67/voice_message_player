@@ -171,20 +171,20 @@ class VoiceController extends MyTicker {
 
   /// Starts playing the voice.
   Future startPlaying(String path) async {
-    // On web, local file paths (using Uri.file) are not allowed.
-    Uri audioUri;
     if (kIsWeb) {
-      // On web, treat the provided path as a URL.
-      audioUri = Uri.parse(path);
+      // On web, use the direct URL
+      await _player.setAudioSource(
+        AudioSource.uri(Uri.parse(path)),
+        initialPosition: currentDuration,
+      );
     } else {
-      // On mobile, use the file URI if isFile is true.
-      audioUri = isFile ? Uri.file(path) : Uri.parse(path);
+      // On mobile, do the local file approach
+      await _player.setAudioSource(
+        isFile ? AudioSource.uri(Uri.file(path)) : AudioSource.uri(Uri.parse(path)),
+        initialPosition: currentDuration,
+      );
     }
 
-    await _player.setAudioSource(
-      AudioSource.uri(audioUri),
-      initialPosition: currentDuration,
-    );
     _player.play();
     _player.setSpeed(speed.getSpeed);
   }
