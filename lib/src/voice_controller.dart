@@ -104,6 +104,7 @@ class VoiceController extends MyTicker {
 
   /// Initializes the voice controller.
   Future init() async {
+    await _player.setVolume(1.0);
     await setMaxDuration(audioSrc);
     _updateUi();
   }
@@ -174,22 +175,20 @@ class VoiceController extends MyTicker {
     playStatus = PlayStatus.stop;
   }
 
-  /// Starts playing the voice.
   Future startPlaying(String path) async {
     if (kIsWeb) {
-      // On web, use the direct URL
+      // On web, use the remote URL directly
       await _player.setAudioSource(
         AudioSource.uri(Uri.parse(path)),
         initialPosition: currentDuration,
       );
     } else {
-      // On mobile, do the local file approach
+      // On mobile, use local file if available
       await _player.setAudioSource(
         isFile ? AudioSource.uri(Uri.file(path)) : AudioSource.uri(Uri.parse(path)),
         initialPosition: currentDuration,
       );
     }
-
     _player.play();
     _player.setSpeed(speed.getSpeed);
   }
